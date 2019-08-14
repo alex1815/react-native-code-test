@@ -10,71 +10,107 @@ import {
   Easing
 } from 'react-native';
 import { SPINNER_SIZE } from '../../models/spinner-mod';
-import { green } from 'ansi-colors';
+import { getNameAsString } from '../../helpers/general-help';
 
-const DEFAULT_SPIN_TIME = 10;
+const NUMBER_OF_CIRCLE = 3;
+const DEFAULT_SPIN_TIME = 2.4;
 
-type Props = { shouldSpin: boolean, size: String };
-type State = { growValue: Animated.Value }
+const CIRCLE_BIG_SIZE = 400;
+
+type Props = { shouldSpin: boolean, size: string };
+type State = { circleSize: number }
 export default class Spinner extends Component<Props, State> {
+  // current implementation can be improved by adding customization spinner size
   static defaultProps = {
     size: SPINNER_SIZE.big
   };
 
-  state = {
-    growValue: new Animated.Value(0)
+  constructor() {
+    super();
+
+    let circles = {};
+    for (let i = 0; i < NUMBER_OF_CIRCLE; i++) {
+      circles[this.generateCircleName(i)] = new Animated.Value(0);
+    }
+
+    this.state = Object.assign({}, circles, { circleSize: CIRCLE_BIG_SIZE });
+  }
+
+  generateCircleName(index: number) {
+    return `growingCircle${ index.toString() }`;
   }
 
   componentDidMount() {
-    this.spin();
-    console.log('come in')
+    for (let i = 0; i < NUMBER_OF_CIRCLE; i++) {
+      const circleName: string = getNameAsString(this.generateCircleName(i));
+      setTimeout(() => this.spin(circleName), i === 0 ? 0 : DEFAULT_SPIN_TIME * 1000 / i);
+    }
   }
 
-  spin() {
-    console.log("you're on the start")
+  spin(circleName: string) {
+    this.generateSpinnerFunc(this.state[circleName],
+      () => {
+        this.setState(
+          { [circleName]: new Animated.Value(0) },
+          () => { this.spin(circleName) }
+        );
+      });
+  }
+
+  generateSpinnerFunc(timingValue: number, callback: Function) {
     if (!this.props.shouldSpin) {
       return;
     }
 
-    console.log("1 level")
     Animated.timing(
-      this.state.growValue,
+      timingValue,
       {
         toValue: DEFAULT_SPIN_TIME,
         duration: DEFAULT_SPIN_TIME * 1000,
         easing: Easing.linear
       }
-    ).start(() => this.spin())
+    ).start(callback);
+  }
+
+  generateCircleProperties(value: Animated.Value) {
+    const grow = value.interpolate({
+      inputRange: [0, DEFAULT_SPIN_TIME],
+      outputRange: [this.state.circleSize / 3, this.state.circleSize]
+    });
+
+    const changingColor = value.interpolate({
+      inputRange: [0, DEFAULT_SPIN_TIME],
+      outputRange: ['rgb(124,252,0)', 'rgb(144,238,144)']
+    });
+
+    const changingOpacity = value.interpolate({
+      inputRange: [0, DEFAULT_SPIN_TIME - DEFAULT_SPIN_TIME / 3, DEFAULT_SPIN_TIME],
+      outputRange: [0.05, 0.1, 0]
+    });
+
+    return { grow, changingColor, changingOpacity };
   }
 
   render() {
-    const grow = this.state.growValue.interpolate({
-      inputRange: [0, DEFAULT_SPIN_TIME / 3, DEFAULT_SPIN_TIME],
-      outputRange: [0, 200, 400]
-    });
+    const circles = [];
 
-    const changingColor = this.state.growValue.interpolate({
-      inputRange: [0, DEFAULT_SPIN_TIME],
-      outputRange: ['rgba(100, 242, 97, 0.8)', 'rgba(230, 230, 230, 1.0)']
-    });
-
-    const changingOpacity = this.state.growValue.interpolate({
-      inputRange: [0, DEFAULT_SPIN_TIME - DEFAULT_SPIN_TIME / 3, DEFAULT_SPIN_TIME],
-      outputRange: [1, 1, 0]
-    });
+    for (let i = 0; i < NUMBER_OF_CIRCLE; i++) {
+      const { grow, changingColor, changingOpacity } = this.generateCircleProperties(this.state[this.generateCircleName(i)]);
+      circles.push(<Animated.View
+        key={ this.generateCircleName(i) }
+        style={ [styles.circle, {
+          height: grow,
+          width: grow,
+          backgroundColor: changingColor,
+          opacity: changingOpacity,
+        }] } >
+      </Animated.View>);
+    }
 
     return (
       <View style={ styles.container }>
         <View style={ styles.centerCircle }></View>
-        <Animated.View
-          style={ {
-            height: grow,
-            borderRadius: 400 / 2,
-            width: grow,
-            backgroundColor: changingColor,
-            opacity: changingOpacity
-          } } >            
-        </Animated.View>
+        { circles }
       </View>
     );
   }
@@ -87,18 +123,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width: 400,
-    height: 400
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+    width: CIRCLE_BIG_SIZE,
+    height: CIRCLE_BIG_SIZE
   },
   centerCircle: {
     width: CENTER_CIRCLE_SIZE,
@@ -106,6 +132,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     borderRadius: CENTER_CIRCLE_SIZE / 2,
     opacity: 1,
+    position: 'absolute'
+  },
+  circle: {
+    borderRadius: CIRCLE_BIG_SIZE / 2,
     position: 'absolute'
   }
 });
