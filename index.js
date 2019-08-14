@@ -1,6 +1,6 @@
 //  @flow
 
 import { AppRegistry } from 'react-native';
-import App from './app/index';
+import App from './src/index';
 
 AppRegistry.registerComponent('Ombori', () => App);
