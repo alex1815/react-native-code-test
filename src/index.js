@@ -9,9 +9,15 @@ import {
 } from 'react-native';
 
 import Spinner from './components/spinner/spinner-comp';
+import { getData } from './services/http/server';
 
 type Props = {};
 export default class App extends Component<Props> {
+  async componentDidMount() {
+    const res = await getData();
+    console.log(res);
+  }
+
   render() {
     return (
       <View style={ styles.container }>

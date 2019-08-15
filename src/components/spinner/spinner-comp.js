@@ -20,7 +20,7 @@ const CIRCLE_BIG_SIZE = 400;
 type Props = { shouldSpin: boolean, size: string };
 type State = { circleSize: number }
 export default class Spinner extends Component<Props, State> {
-  // current implementation can be improved by adding customization spinner size
+  // current implementation can be improved by adding spinner size customization
   static defaultProps = {
     size: SPINNER_SIZE.big
   };
@@ -85,7 +85,7 @@ export default class Spinner extends Component<Props, State> {
 
     const changingOpacity = value.interpolate({
       inputRange: [0, DEFAULT_SPIN_TIME - DEFAULT_SPIN_TIME / 3, DEFAULT_SPIN_TIME],
-      outputRange: [0.05, 0.1, 0]
+      outputRange: [0.08, 0.2, 0]
     });
 
     return { grow, changingColor, changingOpacity };
