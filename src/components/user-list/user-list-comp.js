@@ -6,7 +6,9 @@ import {
   StyleSheet,
   Text,
   View,
-  FlatList
+  FlatList,
+  Animated,
+  Dimensions
 } from 'react-native';
 
 import Spinner from '../spinner/spinner-comp';
@@ -16,12 +18,23 @@ import UserItem from '../user-item/user-item-comp';
 import { getDataByPage, getInitialData, getTotalPages } from '../../services/http/server';
 import { TEXT_FONT_SIZE_BIG, TEXT_FONT_SIZE_NORMAL } from '../styles/general-styl';
 
+const TO_VALUE_SHOWING_LIST = 1;
+const SHOWING_LIST_DURATION = 0.5;
+
 type Props = {};
-type State = { users: Array<User>, isLoading: boolean, lastDownloadedPage: number, totalPages: number, lastItemIndex: number }
+type State = {
+  users: Array<User>,
+  isLoading: boolean,
+  lastDownloadedPage: number,
+  totalPages: number,
+  lastItemIndex: number,
+  currentBottomValue: Animated.Value
+}
 export default class UsersList extends PureComponent<Props, State> {
 
   getNextData: Function;
   getListItem: Function;
+  showList: Function;
 
   constructor() {
     super();
@@ -31,17 +44,20 @@ export default class UsersList extends PureComponent<Props, State> {
       isLoading: true,
       lastDownloadedPage: 3,
       totalPages: -1,
-      lastItemIndex: -1
+      lastItemIndex: -1,
+      currentBottomValue: new Animated.Value(0)
     }
 
     this.getNextData = this.getNextData.bind(this);
     this.getListItem = this.getListItem.bind(this);
+    this.showList = this.showList.bind(this);
   }
 
   async componentDidMount() {
     const users = await getInitialData(this.state.lastDownloadedPage);
     const totalPages = await getTotalPages();
     this.setState({ users, isLoading: false, totalPages });
+    this.showList();
   }
 
   async getNextData() {
@@ -57,6 +73,13 @@ export default class UsersList extends PureComponent<Props, State> {
       lastDownloadedPage: nextPage,
       users: users.concat(res)
     });
+  }
+
+  showList() {
+    Animated.timing(this.state.currentBottomValue, {
+      toValue: TO_VALUE_SHOWING_LIST,
+      duration: SHOWING_LIST_DURATION * 1000
+    }).start();
   }
 
   getListHeader() {
@@ -77,14 +100,21 @@ export default class UsersList extends PureComponent<Props, State> {
   }
 
   render() {
-    const { users, isLoading, lastItemIndex } = this.state;
+    const { users, isLoading, lastItemIndex, currentBottomValue } = this.state;
 
     if (isLoading) {
       return <Spinner shouldSpin={ isLoading } />;
     }
 
+    const bottomValue = currentBottomValue.interpolate({
+      inputRange: [0, TO_VALUE_SHOWING_LIST],
+      outputRange: [Dimensions.get('window').height, 0]
+    });
+
     return (
-      <View>
+      <Animated.View style={ {
+        bottom: bottomValue
+      } } >
         <FlatList
           style={ styles.list }
           data={ users }
@@ -97,7 +127,7 @@ export default class UsersList extends PureComponent<Props, State> {
           onEndReachedThreshold={ 0.2 }
         >
         </FlatList>
-      </View>
+      </Animated.View>
     );
   }
 }
@@ -117,7 +147,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 15,
+    paddingTop: 20,
     paddingBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: 'silver',
