@@ -1,6 +1,6 @@
 // @flow
 
-export function getNameAsString(name: string) {
-  const temp = { [name]: null };
+export function getNameAsString(name: string): string {
+  const temp: { [string]: null } = { [name]: null };
   return Object.keys(temp)[0];
 }

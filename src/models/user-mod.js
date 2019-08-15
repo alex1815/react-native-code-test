@@ -20,7 +20,7 @@ export default class User {
     this.fullName = this.fullName.bind(this);
   }
 
-  fullName() {
+  fullName(): string {
     return `${ this.firstName } ${ this.lastName }`;
   }
 }

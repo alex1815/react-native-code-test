@@ -98,9 +98,11 @@ export default class Spinner extends Component<Props, State> {
     const circles = [];
 
     for (let i = 0; i < NUMBER_OF_CIRCLE; i++) {
-      const { grow, changingColor, changingOpacity } = this.generateCircleProperties(this.state[this.generateCircleName(i)]);
+      const circleName = this.generateCircleName(i);
+      const { grow, changingColor, changingOpacity } = this.generateCircleProperties(this.state[circleName]);
+
       circles.push(<Animated.View
-        key={ this.generateCircleName(i) }
+        key={ circleName }
         style={ [styles.circle, {
           height: grow,
           width: grow,

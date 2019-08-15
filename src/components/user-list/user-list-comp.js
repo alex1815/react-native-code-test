@@ -14,7 +14,7 @@ import Spinner from '../spinner/spinner-comp';
 import User from '../../models/user-mod';
 import UserItem from '../user-item/user-item-comp';
 import { getDataByPage, getInitialData, getTotalPages } from '../../services/http/server';
-import { TEXT_FONT_SIZE_BIG, TEXT_FONT_SIZE_NORMAL } from '../styles/general';
+import { TEXT_FONT_SIZE_BIG, TEXT_FONT_SIZE_NORMAL } from '../styles/general-styl';
 
 type Props = {};
 type State = { users: Array<User>, isLoading: boolean, lastDownloadedPage: number, totalPages: number, lastItemIndex: number }
@@ -45,8 +45,6 @@ export default class UsersList extends PureComponent<Props, State> {
   }
 
   async getNextData() {
-    // todo - add downloading data during scrolling
-    // todo - add "no data" if got all data
     const { lastDownloadedPage, totalPages, users } = this.state;
     const nextPage: number = lastDownloadedPage + 1;
     if (nextPage > totalPages) {
@@ -81,36 +79,30 @@ export default class UsersList extends PureComponent<Props, State> {
   render() {
     const { users, isLoading, lastItemIndex } = this.state;
 
+    if (isLoading) {
+      return <Spinner shouldSpin={ isLoading } />;
+    }
+
     return (
       <View>
-        {
-          isLoading
-            ? <Spinner shouldSpin={ isLoading } />
-            : <FlatList
-              style={ styles.list }
-              data={ users }
-              extraData={ this.state.lastItemIndex }
-              // it's not clear from task - should I add header in this way or as header in the app
-              ListHeaderComponent={ this.getListHeader }
-              renderItem={ this.getListItem }
-              keyExtractor={ user => user.id.toString() }
-              onEndReached={ this.getNextData }
-              onEndReachedThreshold={ 0.2 }
-            >
-            </FlatList>
-        }
+        <FlatList
+          style={ styles.list }
+          data={ users }
+          extraData={ this.state.lastItemIndex }
+          // it's not clear from task - should I add header in this way or as header in the app
+          ListHeaderComponent={ this.getListHeader }
+          renderItem={ this.getListItem }
+          keyExtractor={ user => user.id.toString() }
+          onEndReached={ this.getNextData }
+          onEndReachedThreshold={ 0.2 }
+        >
+        </FlatList>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
   list: {
     flex: 1,
     minWidth: '100%'
