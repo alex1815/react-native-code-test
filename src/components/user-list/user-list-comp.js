@@ -108,6 +108,7 @@ export default class UsersList extends PureComponent<Props, State> {
     });
 
     return (
+      // spinner will work correct without animation for children
       <Spinner shouldSpin={ isLoading } >
         <Animated.View style={ {
           bottom: bottomValue

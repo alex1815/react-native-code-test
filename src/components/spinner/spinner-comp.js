@@ -123,7 +123,7 @@ export class Spinner extends React.Component<Props, State> {
     if (!shouldSpin) {
       const { collapsingSpinner, circleSize } = this.state;
 
-      // we don't want wait the end of animation - it's ok to show children now for getting smooth transition
+      // we don't want to wait the end of animation - it's ok to show children now for getting smooth transition
       if (collapsingSpinner._value >= COLLAPSE_SPINNER_FINISH_VALUE / 2) {
         return this.props.children;
       }
