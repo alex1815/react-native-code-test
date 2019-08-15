@@ -23,26 +23,39 @@ export default class UserItem extends PureComponent<Props> {
           style={ styles.avatar }
           source={ { uri: avatar } }
         />
-        <Text>{ fullName() }</Text>
+        <View style={ styles.textContainer }>
+          <Text style={ styles.name } >{ fullName() }</Text>
+        </View>
       </View>
     );
   }
 }
 
-const AVATAR_SIZE = 50;
+// can be inhertan from global styles.
+const AVATAR_SIZE = 60;
+const TEXT_FONT_SIZE = 20;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    width: '100%',
+    padding: 20,
     backgroundColor: '#F5FCFF',
-    borderBottomWidth: 2,
+    borderBottomWidth: 1,
     borderBottomColor: 'grey'
   },
   avatar: {
     width: AVATAR_SIZE,
     height: AVATAR_SIZE,
     borderRadius: AVATAR_SIZE / 2
+  },
+  name: {
+    fontSize: TEXT_FONT_SIZE
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: "center",
+    paddingLeft: 20
   }
 });
