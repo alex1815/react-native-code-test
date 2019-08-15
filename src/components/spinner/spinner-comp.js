@@ -13,7 +13,7 @@ import { SPINNER_SIZE } from '../../models/spinner-mod';
 import { getNameAsString } from '../../helpers/general-help';
 
 const NUMBER_OF_CIRCLE = 3;
-const DEFAULT_SPIN_TIME = 2.4;
+const DEFAULT_SPIN_TIME = 1.8;
 
 const CIRCLE_BIG_SIZE = 400;
 
@@ -24,8 +24,6 @@ export default class Spinner extends Component<Props, State> {
   static defaultProps = {
     size: SPINNER_SIZE.big
   };
-
-  timers: Array<TimeoutID> = [];
 
   constructor() {
     super();
@@ -45,13 +43,12 @@ export default class Spinner extends Component<Props, State> {
   componentDidMount() {
     for (let i = 0; i < NUMBER_OF_CIRCLE; i++) {
       const circleName: string = getNameAsString(this.generateCircleName(i));
-      const timer = setTimeout(() => this.spin(circleName), i === 0 ? 0 : DEFAULT_SPIN_TIME * 1000 / i);
-      this.timers.push(timer);
+      this.spin(circleName, i === 0 ? 0 : DEFAULT_SPIN_TIME * 1000 / i);
     }
   }
-  
-  spin(circleName: string) {
-    this.generateSpinnerFunc(this.state[circleName],
+
+  spin(circleName: string, delay: number = 0) {
+    this.generateSpinnerFunc(this.state[circleName], delay,
       (done) => {
         if (done.finished) {
           this.setState(
@@ -62,7 +59,7 @@ export default class Spinner extends Component<Props, State> {
       });
   }
 
-  generateSpinnerFunc(timingValue: number, callback: Function) {
+  generateSpinnerFunc(timingValue: number, delay: number = 0, callback: Function) {
     if (!this.props.shouldSpin) {
       return;
     }
@@ -72,7 +69,8 @@ export default class Spinner extends Component<Props, State> {
       {
         toValue: DEFAULT_SPIN_TIME,
         duration: DEFAULT_SPIN_TIME * 1000,
-        easing: Easing.linear
+        easing: Easing.linear,
+        delay
       }
     ).start(callback);
   }
@@ -118,10 +116,6 @@ export default class Spinner extends Component<Props, State> {
         { circles }
       </View>
     );
-  }
-
-  componentWillUnmount() {
-    this.timers.forEach(timer => clearTimeout(timer));
   }
 }
 

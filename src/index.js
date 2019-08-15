@@ -8,7 +8,6 @@ import {
   View
 } from 'react-native';
 
-import { getData } from './services/http/server';
 import UsersList from './components/user-list/user-list-comp';
 
 type Props = {};
