@@ -25,7 +25,10 @@ export default class UsersList extends PureComponent<Props, State> {
     lastDownloadedPage: 3
   }
 
+// TODO - add "Users" header
+
   async componentDidMount() {
+    // TODO add delay in 3 seconds for getting data from server
     const users = await getData();
     this.setState({ users, isLoading: false });
   }
@@ -38,7 +41,7 @@ export default class UsersList extends PureComponent<Props, State> {
 
   render() {
     const { users, isLoading } = this.state;
-    
+
     return (
       <View>
         {

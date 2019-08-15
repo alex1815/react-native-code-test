@@ -16,7 +16,7 @@ export default class UserItem extends PureComponent<Props> {
   render() {
     const { user } = this.props;
     const { avatar, fullName } = user;
-    
+
     return (
       <View style={ styles.container }>
         <Image
@@ -30,6 +30,8 @@ export default class UserItem extends PureComponent<Props> {
     );
   }
 }
+
+// TODO - bold font
 
 // can be inhertan from global styles.
 const AVATAR_SIZE = 60;
