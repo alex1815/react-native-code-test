@@ -25,7 +25,6 @@ export default class UsersList extends PureComponent<Props, State> {
     this.state = {
       users: [],
       isLoading: true,
-      // TODO - think - download the data and don't hardcode value 
       lastDownloadedPage: 3,
       totalPages: null,
       lastItemIndex: -1

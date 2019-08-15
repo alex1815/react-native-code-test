@@ -32,8 +32,6 @@ export default class UserItem extends PureComponent<Props> {
   }
 }
 
-// TODO - bold font
-
 // can be inhertan from global styles.
 const AVATAR_SIZE = 60;
 const TEXT_FONT_WIDTH = 'normal';
