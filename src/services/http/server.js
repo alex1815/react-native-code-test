@@ -17,12 +17,12 @@ export async function getInitialData(pages: number): Promise<Array<User>> {
       res.forEach(arr => { concatedRes = concatedRes.concat(arr) });
       return concatedRes;
     })
-    // delay according task
+    // delay according task TODO - fix time here
     .then(res => new Promise(resolve => setTimeout(() => resolve(res), 3000)))
     .catch(err => console.log(err));
 
     // example of response
-    // return [{'id':1,'email':'george.bluth@reqres.in','first_name':'George','last_name':'Bluth','avatar':'https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg'},{'id':2,'email':'janet.weaver@reqres.in','first_name':'Janet','last_name':'Weaver','avatar':'https://s3.amazonaws.com/uifaces/faces/twitter/josephstein/128.jpg'},{'id':3,'email':'emma.wong@reqres.in','first_name':'Emma','last_name':'Wong','avatar':'https://s3.amazonaws.com/uifaces/faces/twitter/olegpogodaev/128.jpg'}]
+    // return [{'id':1,'email':'george.bluth@reqres.in','first_name':'George','last_name':'Bluth','avatar':'https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg'}]
 }
 
 export async function getDataByPage(page: number): Promise<Array<User>> {

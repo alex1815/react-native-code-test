@@ -12,10 +12,14 @@ import UsersList from './components/user-list/user-list-comp';
 
 type Props = {};
 export default class App extends Component<Props> {
+  componentDidCatch(err: any) {
+    console.log(err)
+  }
+
   render() {
     return (
       <View style={ styles.container }>
-        <UsersList />        
+        <UsersList />
       </View>
     );
   }

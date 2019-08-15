@@ -11,7 +11,7 @@ import {
   Dimensions
 } from 'react-native';
 
-import Spinner from '../spinner/spinner-comp';
+import { Spinner, CLOSING_SPINNER_DURATION } from '../spinner/spinner-comp';
 
 import User from '../../models/user-mod';
 import UserItem from '../user-item/user-item-comp';
@@ -56,8 +56,7 @@ export default class UsersList extends PureComponent<Props, State> {
   async componentDidMount() {
     const users = await getInitialData(this.state.lastDownloadedPage);
     const totalPages = await getTotalPages();
-    this.setState({ users, isLoading: false, totalPages });
-    this.showList();
+    this.setState({ users, isLoading: false, totalPages }, this.showList);
   }
 
   async getNextData() {
@@ -78,7 +77,8 @@ export default class UsersList extends PureComponent<Props, State> {
   showList() {
     Animated.timing(this.state.currentBottomValue, {
       toValue: TO_VALUE_SHOWING_LIST,
-      duration: SHOWING_LIST_DURATION * 1000
+      duration: SHOWING_LIST_DURATION * 1000,
+      delay: CLOSING_SPINNER_DURATION * 1000
     }).start();
   }
 
@@ -102,32 +102,30 @@ export default class UsersList extends PureComponent<Props, State> {
   render() {
     const { users, isLoading, lastItemIndex, currentBottomValue } = this.state;
 
-    if (isLoading) {
-      return <Spinner shouldSpin={ isLoading } />;
-    }
-
     const bottomValue = currentBottomValue.interpolate({
       inputRange: [0, TO_VALUE_SHOWING_LIST],
       outputRange: [Dimensions.get('window').height, 0]
     });
 
     return (
-      <Animated.View style={ {
-        bottom: bottomValue
-      } } >
-        <FlatList
-          style={ styles.list }
-          data={ users }
-          extraData={ this.state.lastItemIndex }
-          // it's not clear from task - should I add header in this way or as header in the app
-          ListHeaderComponent={ this.getListHeader }
-          renderItem={ this.getListItem }
-          keyExtractor={ user => user.id.toString() }
-          onEndReached={ this.getNextData }
-          onEndReachedThreshold={ 0.2 }
-        >
-        </FlatList>
-      </Animated.View>
+      <Spinner shouldSpin={ isLoading } >
+        <Animated.View style={ {
+          bottom: bottomValue
+        } } >
+          <FlatList
+            style={ styles.list }
+            data={ users }
+            extraData={ this.state.lastItemIndex }
+            // it's not clear from task - should I add header in this way or as header in the app
+            ListHeaderComponent={ this.getListHeader }
+            renderItem={ this.getListItem }
+            keyExtractor={ user => user.id.toString() }
+            onEndReached={ this.getNextData }
+            onEndReachedThreshold={ 0.3 }
+          >
+          </FlatList>
+        </Animated.View>
+      </Spinner>
     );
   }
 }
