@@ -17,8 +17,10 @@ import { getDataByPage, getInitialData, getTotalPages } from '../../services/htt
 import { TEXT_FONT_SIZE_BIG, TEXT_FONT_SIZE_NORMAL } from '../styles/general';
 
 type Props = {};
-type State = { users: Array<User>, isLoading: boolean, lastDownloadedPage: number, totalPages?: number, lastItemIndex: number }
+type State = { users: Array<User>, isLoading: boolean, lastDownloadedPage: number, totalPages: number, lastItemIndex: number }
 export default class UsersList extends PureComponent<Props, State> {
+  getNextData: Function;
+
   constructor() {
     super();
 
@@ -26,13 +28,15 @@ export default class UsersList extends PureComponent<Props, State> {
       users: [],
       isLoading: true,
       lastDownloadedPage: 3,
-      totalPages: null,
+      totalPages: -1,
       lastItemIndex: -1
     }
 
     this.getNextData = this.getNextData.bind(this);
   }
   // TODO - add "Users" header
+
+  // TODO - fix flow errors
 
   async componentDidMount() {
     // TODO add delay in 3 seconds for getting data from server

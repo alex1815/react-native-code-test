@@ -1,6 +1,6 @@
 // @flow
 
-export function getNameAsString(growValueCircle: string) {
-  const temp = { [growValueCircle]: null };
+export function getNameAsString(name: string) {
+  const temp = { [name]: null };
   return Object.keys(temp)[0];
 }
