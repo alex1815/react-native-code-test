@@ -21,6 +21,7 @@ type Props = { shouldSpin: boolean, size?: string };
 type State = { circleSize: number }
 export default class Spinner extends Component<Props, State> {
   // current implementation can be improved by adding spinner size customization
+  // as improvement - can add more beautiful hiding (pass smt like "completed = true" and reduce opacity to 0 during half of second as example)
   static defaultProps = {
     size: SPINNER_SIZE.big
   };

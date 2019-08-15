@@ -2,6 +2,7 @@
 
 1. For run flow, call "yarn flow".
 2. Current React doesn't support hooks, so I can't use them
+3. I added flow, but it wasn't my main goal to cover all code with types (it was interesting experience)
 
 What the test app should do:
 

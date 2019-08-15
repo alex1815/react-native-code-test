@@ -17,6 +17,8 @@ export async function getInitialData(pages: number): Promise<Array<User>> {
       res.forEach(arr => { concatedRes = concatedRes.concat(arr) });
       return concatedRes;
     })
+    // delay according task
+    .then(res => new Promise(resolve => setTimeout(() => resolve(res), 3000)))
     .catch(err => console.log(err));
 
     // example of response

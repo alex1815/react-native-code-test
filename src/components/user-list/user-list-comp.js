@@ -19,6 +19,7 @@ import { TEXT_FONT_SIZE_BIG, TEXT_FONT_SIZE_NORMAL } from '../styles/general-sty
 type Props = {};
 type State = { users: Array<User>, isLoading: boolean, lastDownloadedPage: number, totalPages: number, lastItemIndex: number }
 export default class UsersList extends PureComponent<Props, State> {
+
   getNextData: Function;
   getListItem: Function;
 
@@ -38,7 +39,6 @@ export default class UsersList extends PureComponent<Props, State> {
   }
 
   async componentDidMount() {
-    // TODO add delay in 3 seconds for getting data from server
     const users = await getInitialData(this.state.lastDownloadedPage);
     const totalPages = await getTotalPages();
     this.setState({ users, isLoading: false, totalPages });
