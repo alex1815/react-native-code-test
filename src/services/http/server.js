@@ -1,9 +1,11 @@
+import User from "../../models/user-mod";
+
 // @flow
 
 // in real app should be extra checks
 export async function getData() {
   return Promise.all([getDataByPage(1), getDataByPage(2), getDataByPage(3)])
-    .then(([res1, res2, res3]) => res1.data.concat(res2.data, res3.data))
+    .then(([res1, res2, res3]) => res1.concat(res2, res3))
     .catch(err => console.log(err));
 
     // example of response
@@ -19,5 +21,7 @@ function getDataByPage(page) {
     }
   })
   .then(res => res.json())
+  .then(res => res.data)
+  .then(res => res.map(rawUser => new User(rawUser)))
   .catch(err => console.log(err));
 }

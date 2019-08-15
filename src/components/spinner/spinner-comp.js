@@ -17,7 +17,7 @@ const DEFAULT_SPIN_TIME = 2.4;
 
 const CIRCLE_BIG_SIZE = 400;
 
-type Props = { shouldSpin: boolean, size: string };
+type Props = { shouldSpin: boolean, size?: string };
 type State = { circleSize: number }
 export default class Spinner extends Component<Props, State> {
   // current implementation can be improved by adding spinner size customization
