@@ -14,9 +14,9 @@ import User from '../../models/user-mod';
 type Props = { user: User };
 export default class UserItem extends PureComponent<Props> {
   render() {
-    console.log(this.props);
     const { user } = this.props;
     const { avatar, fullName } = user;
+    
     return (
       <View style={ styles.container }>
         <Image
@@ -38,12 +38,12 @@ const TEXT_FONT_SIZE = 20;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "row",
+    flexDirection: 'row',
     width: '100%',
     padding: 20,
     backgroundColor: '#F5FCFF',
     borderBottomWidth: 1,
-    borderBottomColor: 'grey'
+    borderBottomColor: 'lightgrey'
   },
   avatar: {
     width: AVATAR_SIZE,
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
     paddingLeft: 20
   }
 });

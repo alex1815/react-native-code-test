@@ -13,7 +13,7 @@ import Spinner from '../spinner/spinner-comp';
 
 import User from '../../models/user-mod';
 import UserItem from '../user-item/user-item-comp';
-import { getData } from '../../services/http/server';
+import { getData, getDataByPage } from '../../services/http/server';
 
 type Props = {};
 type State = { users: Array<User>, isLoading: boolean }
@@ -31,12 +31,14 @@ export default class UsersList extends PureComponent<Props, State> {
   }
 
   async getNextData(page) {
-
+    // todo - add downloading data during scrolling
+    // todo - add "no data" if got all data
+    await getDataByPage();
   }
 
   render() {
     const { users, isLoading } = this.state;
-    console.log(users)
+    
     return (
       <View>
         {

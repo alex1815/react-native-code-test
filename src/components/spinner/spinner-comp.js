@@ -49,11 +49,13 @@ export default class Spinner extends Component<Props, State> {
 
   spin(circleName: string) {
     this.generateSpinnerFunc(this.state[circleName],
-      () => {
-        this.setState(
-          { [circleName]: new Animated.Value(0) },
-          () => { this.spin(circleName) }
-        );
+      (done) => {
+        if (done.finished) {
+          this.setState(
+            { [circleName]: new Animated.Value(0) },
+            () => { this.spin(circleName) }
+          );
+        }
       });
   }
 
