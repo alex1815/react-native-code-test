@@ -25,6 +25,8 @@ export default class Spinner extends Component<Props, State> {
     size: SPINNER_SIZE.big
   };
 
+  timers: Array<TimeoutID> = [];
+
   constructor() {
     super();
 
@@ -43,10 +45,11 @@ export default class Spinner extends Component<Props, State> {
   componentDidMount() {
     for (let i = 0; i < NUMBER_OF_CIRCLE; i++) {
       const circleName: string = getNameAsString(this.generateCircleName(i));
-      setTimeout(() => this.spin(circleName), i === 0 ? 0 : DEFAULT_SPIN_TIME * 1000 / i);
+      const timer = setTimeout(() => this.spin(circleName), i === 0 ? 0 : DEFAULT_SPIN_TIME * 1000 / i);
+      this.timers.push(timer);
     }
   }
-
+  
   spin(circleName: string) {
     this.generateSpinnerFunc(this.state[circleName],
       (done) => {
@@ -115,6 +118,10 @@ export default class Spinner extends Component<Props, State> {
         { circles }
       </View>
     );
+  }
+
+  componentWillUnmount() {
+    this.timers.forEach(timer => clearTimeout(timer));
   }
 }
 
