@@ -3,9 +3,20 @@ import User from '../../models/user-mod';
 // @flow
 
 // in real app should be extra checks
-export async function getData() {
-  return Promise.all([getDataByPage(1), getDataByPage(2), getDataByPage(3)])
-    .then(([res1, res2, res3]) => res1.concat(res2, res3))
+export async function getInitialData(pages: number) {
+  if (pages < 0) throw new Error('Pages should be > 0');
+
+  let promises = [];
+  for (let i = 1; i <= pages; i++) {
+    promises.push(getDataByPage(i));
+  }
+
+  return Promise.all(promises)
+    .then((res) => {
+      let concatedRes = [];      
+      res.forEach(arr => { concatedRes = concatedRes.concat(arr) });
+      return concatedRes;
+    })
     .catch(err => console.log(err));
 
     // example of response
@@ -23,5 +34,18 @@ export async function getDataByPage(page) {
   .then(res => res.json())
   .then(res => res.data)
   .then(res => res.map(rawUser => new User(rawUser)))
+  .catch(err => console.log(err));
+}
+
+export async function getTotalPages() {
+  return fetch(`https://reqres.in/api/users?page=1`, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }
+  })
+  .then(res => res.json())
+  .then(res => res.total_pages)
   .catch(err => console.log(err));
 }

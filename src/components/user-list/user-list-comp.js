@@ -13,34 +13,54 @@ import Spinner from '../spinner/spinner-comp';
 
 import User from '../../models/user-mod';
 import UserItem from '../user-item/user-item-comp';
-import { getData, getDataByPage } from '../../services/http/server';
+import { getDataByPage, getInitialData, getTotalPages } from '../../services/http/server';
+import { TEXT_FONT_SIZE_BIG, TEXT_FONT_SIZE_NORMAL } from '../styles/general';
 
 type Props = {};
-type State = { users: Array<User>, isLoading: boolean }
+type State = { users: Array<User>, isLoading: boolean, lastDownloadedPage: number, totalPages?: number, lastItemIndex: number }
 export default class UsersList extends PureComponent<Props, State> {
-  state = {
-    users: [],
-    isLoading: true,
-    // TODO - think - download the data and don't hardcode value 
-    lastDownloadedPage: 3
-  }
+  constructor() {
+    super();
 
-// TODO - add "Users" header
+    this.state = {
+      users: [],
+      isLoading: true,
+      // TODO - think - download the data and don't hardcode value 
+      lastDownloadedPage: 3,
+      totalPages: null,
+      lastItemIndex: -1
+    }
+
+    this.getNextData = this.getNextData.bind(this);
+  }
+  // TODO - add "Users" header
 
   async componentDidMount() {
     // TODO add delay in 3 seconds for getting data from server
-    const users = await getData();
-    this.setState({ users, isLoading: false });
+    const users = await getInitialData(this.state.lastDownloadedPage);
+    const totalPages = await getTotalPages();
+    this.setState({ users, isLoading: false, totalPages });
   }
 
-  async getNextData(page) {
+  async getNextData() {
     // todo - add downloading data during scrolling
     // todo - add "no data" if got all data
-    await getDataByPage();
+    const { lastDownloadedPage, totalPages, users } = this.state;
+    const nextPage: number = lastDownloadedPage + 1;
+    if (nextPage > totalPages) {
+      this.setState({ lastItemIndex: users.length - 1 });
+      return;
+    }
+
+    const res = await getDataByPage(nextPage);
+    this.setState({
+      lastDownloadedPage: nextPage,
+      users: users.concat(res)
+    });
   }
 
   render() {
-    const { users, isLoading } = this.state;
+    const { users, isLoading, lastItemIndex } = this.state;
 
     return (
       <View>
@@ -50,10 +70,20 @@ export default class UsersList extends PureComponent<Props, State> {
             : <FlatList
               style={ styles.list }
               data={ users }
-              renderItem={ item => { return <UserItem user={ item.item } /> } }
+              extraData={ this.state.lastItemIndex }
+              renderItem={ item => {
+                return item.index !== lastItemIndex
+                  ? <UserItem user={ item.item } />
+                  : <View>
+                    <UserItem user={ item.item } />
+                    <View style={ styles.noMoreUsersContainer }>
+                      <Text style={ styles.noMoreUsers } >No more users</Text>
+                    </View>
+                  </View>
+              } }
               keyExtractor={ user => user.id.toString() }
               onEndReached={ this.getNextData }
-              onEndReachedThreshold={ 1 }
+              onEndReachedThreshold={ 0.2 }
             >
             </FlatList>
         }
@@ -72,5 +102,14 @@ const styles = StyleSheet.create({
   list: {
     flex: 1,
     minWidth: '100%'
+  },
+  noMoreUsersContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20
+  },
+  noMoreUsers: {
+    fontSize: TEXT_FONT_SIZE_NORMAL
   }
 });

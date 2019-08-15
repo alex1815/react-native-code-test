@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 
 import User from '../../models/user-mod';
+import { TEXT_FONT_SIZE_NORMAL } from '../styles/general';
 
 type Props = { user: User };
 export default class UserItem extends PureComponent<Props> {
@@ -35,7 +36,7 @@ export default class UserItem extends PureComponent<Props> {
 
 // can be inhertan from global styles.
 const AVATAR_SIZE = 60;
-const TEXT_FONT_SIZE = 20;
+const TEXT_FONT_WIDTH = 'normal';
 
 const styles = StyleSheet.create({
   container: {
@@ -53,7 +54,8 @@ const styles = StyleSheet.create({
     borderRadius: AVATAR_SIZE / 2
   },
   name: {
-    fontSize: TEXT_FONT_SIZE
+    fontSize: TEXT_FONT_SIZE_NORMAL,
+    fontWeight: TEXT_FONT_WIDTH
   },
   textContainer: {
     flex: 1,
