@@ -98,9 +98,11 @@ export class Spinner extends React.Component<Props, State> {
   }
 
   generateCircleProperties(value: Animated.Value) {
+    const { circleSize } = this.state;
+
     const grow = value.interpolate({
       inputRange: [0, DEFAULT_SPIN_TIME],
-      outputRange: [this.state.circleSize / 3, this.state.circleSize]
+      outputRange: [circleSize / 3, circleSize]
     });
 
     const changingColor = value.interpolate({
