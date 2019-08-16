@@ -102,7 +102,7 @@ export class Spinner extends React.Component<Props, State> {
 
     const grow = value.interpolate({
       inputRange: [0, DEFAULT_SPIN_TIME],
-      outputRange: [circleSize / 3, circleSize]
+      outputRange: [0.3, 1]
     });
 
     const changingColor = value.interpolate({
@@ -121,9 +121,10 @@ export class Spinner extends React.Component<Props, State> {
   render() {
     let sizeCoefficient: Animated.AnimatedInterpolation = new Animated.Value(1);
     const { shouldSpin } = this.props;
+    const { circleSize } = this.state;
 
     if (!shouldSpin) {
-      const { collapsingSpinner, circleSize } = this.state;
+      const { collapsingSpinner } = this.state;
 
       // we don't want to wait the end of animation - it's ok to show children now for getting smooth transition
       if (collapsingSpinner._value >= COLLAPSE_SPINNER_FINISH_VALUE / 2) {
@@ -145,26 +146,26 @@ export class Spinner extends React.Component<Props, State> {
     for (let i = 0; i < NUMBER_OF_CIRCLE; i++) {
       const circleName = this.generateCircleName(i);
       const { grow, changingColor, changingOpacity } = this.generateCircleProperties(this.state[circleName]);
-      const size = Animated.divide(grow, sizeCoefficient);
+      const scale = Animated.divide(grow, sizeCoefficient);
 
       circles.push(<Animated.View
         key={ circleName }
         style={ [styles.circle, {
-          height: size,
-          width: size,
+          transform: [{ scale }],
+          height: circleSize,
+          width: circleSize,
           backgroundColor: changingColor,
           opacity: changingOpacity,
         }] } >
       </Animated.View>);
     }
 
-    const centerSize = Animated.divide(CENTER_CIRCLE_SIZE, sizeCoefficient);
+    const centerScale = Animated.divide(new Animated.Value(1), sizeCoefficient);
 
     return (
       <View style={ styles.container }>
         <Animated.View style={ [styles.centerCircle, {
-          width: centerSize,
-          height: centerSize
+          transform: [{ scale: centerScale }]
         }] }></Animated.View>
         { circles }
       </View>
@@ -185,6 +186,8 @@ const styles = StyleSheet.create({
   centerCircle: {
     backgroundColor: 'green',
     borderRadius: CENTER_CIRCLE_SIZE / 2,
+    width: CENTER_CIRCLE_SIZE,
+    height: CENTER_CIRCLE_SIZE,
     opacity: 1,
     position: 'absolute'
   },
